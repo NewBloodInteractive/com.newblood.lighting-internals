@@ -53,7 +53,7 @@ namespace NewBlood
                 outputIdentifiers[i] = GetSceneObjectIdentifier(instanceIds[i]);
         }
 
-        public static void SceneObjectIdentifiersToObjectsSlow(Scene scene, SceneObjectIdentifier[] identifiers, Object[] objects)
+        public static void SceneObjectIdentifiersToObjectsSlow(Scene scene, SceneObjectIdentifier[] identifiers, Object[] outputObjects)
         {
             var sceneObjects = GetSceneObjects(scene);
 
@@ -63,24 +63,24 @@ namespace NewBlood
                 {
                     if (GetSceneObjectIdentifier(sceneObject).Equals(identifiers[i]))
                     {
-                        objects[i] = sceneObject;
+                        outputObjects[i] = sceneObject;
                         break;
                     }
                 }
             }
         }
 
-        public static void SceneObjectIdentifiersToInstanceIDsSlow(Scene scene, SceneObjectIdentifier[] identifiers, int[] instanceIds)
+        public static void SceneObjectIdentifiersToInstanceIDsSlow(Scene scene, SceneObjectIdentifier[] identifiers, int[] outputInstanceIDs)
         {
             var sceneObjects = GetSceneObjects(scene);
-
+            
             for (int i = 0; i < identifiers.Length; i++)
             {
                 foreach (var sceneObject in sceneObjects)
                 {
                     if (GetSceneObjectIdentifier(sceneObject).Equals(identifiers[i]))
                     {
-                        instanceIds[i] = sceneObject.GetInstanceID();
+                        outputInstanceIDs[i] = sceneObject.GetInstanceID();
                         break;
                     }
                 }

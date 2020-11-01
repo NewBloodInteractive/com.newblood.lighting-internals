@@ -118,7 +118,7 @@ namespace NewBlood
             set { m_EnlightenDataVersion.intValue = value; m_Object.ApplyModifiedProperties(); }
         }
 
-        public LightingData(LightingDataAsset asset)
+        LightingData(LightingDataAsset asset)
         {
             if (asset == null)
                 throw new ArgumentNullException(nameof(asset));
@@ -147,6 +147,11 @@ namespace NewBlood
             m_BakedReflectionProbes                 = m_Object.FindProperty("m_BakedReflectionProbes");
             m_EnlightenData                         = m_Object.FindProperty("m_EnlightenData");
             m_EnlightenDataVersion                  = m_Object.FindProperty("m_EnlightenDataVersion");
+        }
+
+        public static LightingData CreateFromAsset(LightingDataAsset asset)
+        {
+            return new LightingData(asset);
         }
 
         public static LightingData CreateInstance()

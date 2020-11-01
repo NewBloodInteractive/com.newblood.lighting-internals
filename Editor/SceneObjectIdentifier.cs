@@ -1,15 +1,22 @@
-﻿using UnityEditor;
+﻿using System;
+using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using System.Collections.Generic;
+using Object = UnityEngine.Object;
 
 namespace NewBlood
 {
-    public struct SceneObjectIdentifier
+    public struct SceneObjectIdentifier : IEquatable<SceneObjectIdentifier>
     {
         public ulong targetObject { get; set; }
 
         public ulong targetPrefab { get; set; }
+
+        public bool Equals(SceneObjectIdentifier other)
+        {
+            return targetObject == other.targetObject && targetPrefab == other.targetPrefab;
+        }
 
         public static SceneObjectIdentifier FromGlobalObjectId(GlobalObjectId id)
         {
@@ -20,52 +27,74 @@ namespace NewBlood
             };
         }
 
-        public static SceneObjectIdentifier GetSceneObjectIdentifierSlow(int instanceId)
+        public static SceneObjectIdentifier GetSceneObjectIdentifier(int instanceId)
         {
-            return FromGlobalObjectId(GlobalObjectId.GetGlobalObjectIdSlow(instanceId));
+            return GetSceneObjectIdentifier(EditorUtility.InstanceIDToObject(instanceId));
         }
 
-        public static SceneObjectIdentifier GetSceneObjectIdentifierSlow(Object targetObject)
+        public static SceneObjectIdentifier GetSceneObjectIdentifier(Object targetObject)
         {
-            return FromGlobalObjectId(GlobalObjectId.GetGlobalObjectIdSlow(targetObject));
+            return new SceneObjectIdentifier
+            {
+                targetObject = GetLocalIdentifier(targetObject),
+                targetPrefab = GetLocalIdentifier(PrefabUtility.GetPrefabInstanceHandle(targetObject))
+            };
         }
 
-        public static void GetSceneObjectIdentifiersSlow(Object[] objects, SceneObjectIdentifier[] outputIdentifiers)
+        public static void GetSceneObjectIdentifiers(Object[] objects, SceneObjectIdentifier[] outputIdentifiers)
         {
-            var gids = new GlobalObjectId[outputIdentifiers.Length];
-            GlobalObjectId.GetGlobalObjectIdsSlow(objects, gids);
-
-            for (int i = 0; i < gids.Length; i++)
-                outputIdentifiers[i] = FromGlobalObjectId(gids[i]);
+            for (int i = 0; i < objects.Length; i++)
+                outputIdentifiers[i] = GetSceneObjectIdentifier(objects[i]);
         }
 
-        public static void GetSceneObjectIdentifiersSlow(int[] instanceIds, SceneObjectIdentifier[] outputIdentifiers)
+        public static void GetSceneObjectIdentifiers(int[] instanceIds, SceneObjectIdentifier[] outputIdentifiers)
         {
-            var gids = new GlobalObjectId[outputIdentifiers.Length];
-            GlobalObjectId.GetGlobalObjectIdsSlow(instanceIds, gids);
-
-            for (int i = 0; i < gids.Length; i++)
-                outputIdentifiers[i] = FromGlobalObjectId(gids[i]);
+            for (int i = 0; i < instanceIds.Length; i++)
+                outputIdentifiers[i] = GetSceneObjectIdentifier(instanceIds[i]);
         }
 
-        public static void SceneObjectIdentifiersToObjectsSlow(Scene scene, SceneObjectIdentifier[] ids, Object[] objects)
+        public static void SceneObjectIdentifiersToObjectsSlow(Scene scene, SceneObjectIdentifier[] identifiers, Object[] objects)
         {
-            var gids = FilterGlobalObjectIds(GetGlobalObjectIdsForSceneSlow(scene), ids);
-            GlobalObjectId.GlobalObjectIdentifiersToObjectsSlow(gids, objects);
+            var sceneObjects = GetSceneObjects(scene);
+
+            for (int i = 0; i < identifiers.Length; i++)
+            {
+                foreach (var sceneObject in sceneObjects)
+                {
+                    if (GetSceneObjectIdentifier(sceneObject).Equals(identifiers[i]))
+                    {
+                        objects[i] = sceneObject;
+                        break;
+                    }
+                }
+            }
         }
 
-        public static void SceneObjectIdentifiersToInstanceIDsSlow(Scene scene, SceneObjectIdentifier[] ids, int[] instanceIds)
+        public static void SceneObjectIdentifiersToInstanceIDsSlow(Scene scene, SceneObjectIdentifier[] identifiers, int[] instanceIds)
         {
-            var gids = FilterGlobalObjectIds(GetGlobalObjectIdsForSceneSlow(scene), ids);
-            GlobalObjectId.GlobalObjectIdentifiersToInstanceIDsSlow(gids, instanceIds);
+            var sceneObjects = GetSceneObjects(scene);
+
+            for (int i = 0; i < identifiers.Length; i++)
+            {
+                foreach (var sceneObject in sceneObjects)
+                {
+                    if (GetSceneObjectIdentifier(sceneObject).Equals(identifiers[i]))
+                    {
+                        instanceIds[i] = sceneObject.GetInstanceID();
+                        break;
+                    }
+                }
+            }
         }
 
         public static Object SceneObjectIdentifierToObjectSlow(Scene scene, SceneObjectIdentifier id)
         {
-            foreach (var gid in GetGlobalObjectIdsForSceneSlow(scene))
+            var objects = GetSceneObjects(scene);
+
+            foreach (var sceneObject in objects)
             {
-                if (gid.targetObjectId == id.targetObject && gid.targetPrefabId == id.targetPrefab)
-                    return GlobalObjectId.GlobalObjectIdentifierToObjectSlow(gid);
+                if (GetSceneObjectIdentifier(sceneObject).Equals(id))
+                    return sceneObject;
             }
 
             return null;
@@ -73,58 +102,40 @@ namespace NewBlood
 
         public static int SceneObjectIdentifierToInstanceIDSlow(Scene scene, SceneObjectIdentifier id)
         {
-            foreach (var gid in GetGlobalObjectIdsForSceneSlow(scene))
-            {
-                if (gid.targetObjectId == id.targetObject && gid.targetPrefabId == id.targetPrefab)
-                    return GlobalObjectId.GlobalObjectIdentifierToInstanceIDSlow(gid);
-            }
-
-            return 0;
+            return SceneObjectIdentifierToObjectSlow(scene, id).GetInstanceID();
         }
 
-        static GlobalObjectId[] FilterGlobalObjectIds(GlobalObjectId[] gids, SceneObjectIdentifier[] sids)
-        {
-            var ids = new GlobalObjectId[sids.Length];
-
-            for (int i = 0; i < sids.Length; i++)
-            {
-                foreach (var gid in gids)
-                {
-                    if (gid.targetObjectId == sids[i].targetObject && gid.targetPrefabId == sids[i].targetPrefab)
-                    {
-                        ids[i] = gid;
-                        break;
-                    }
-                }
-            }
-
-            return ids;
-        }
-
-        static GlobalObjectId[] GetGlobalObjectIdsForSceneSlow(Scene scene)
+        static Object[] GetSceneObjects(Scene scene)
         {
             var roots      = scene.GetRootGameObjects();
-            var objects    = new List<int>();
             var transforms = new List<Transform>();
+            var objects    = new List<Object>();
 
             foreach (var root in roots)
             {
                 root.GetComponentsInChildren(true, transforms);
                 foreach (var transform in transforms)
                 {
-                    objects.Add(transform.gameObject.GetInstanceID());
+                    objects.Add(transform.gameObject);
 
                     foreach (var component in transform.GetComponents<Component>())
                     {
-                        objects.Add(component.GetInstanceID());
+                        objects.Add(component);
                     }
                 }
             }
 
-            var instanceIds = objects.ToArray();
-            var globalIds   = new GlobalObjectId[instanceIds.Length];
-            GlobalObjectId.GetGlobalObjectIdsSlow(instanceIds, globalIds);
-            return globalIds;
+            return objects.ToArray();
+        }
+
+        static ulong GetLocalIdentifier(Object obj)
+        {
+            if (obj == null)
+                return 0;
+
+            var so = new SerializedObject(obj);
+            SerializedObjectUtility.SetInspectorMode(so, InspectorMode.DebugInternal);
+            return (ulong)so.FindProperty("m_LocalIdentfierInFile").longValue;
         }
 
         internal static void Write(SerializedProperty property, SceneObjectIdentifier value)

@@ -123,11 +123,8 @@ namespace NewBlood
 
             m_Object = new SerializedObject(asset);
 
-            // Changing inspectorMode to DebugInternal (2) allows us to
-            // see the otherwise inaccessible values in LightingDataAsset.
-            typeof(SerializedObject)
-                .GetProperty("inspectorMode", BindingFlags.NonPublic | BindingFlags.Instance)
-                .SetValue(m_Object, 2);
+            // Changing inspectorMode to DebugInternal allows us to see inaccessible values in LightingDataAsset.
+            SerializedObjectUtility.SetInspectorMode(m_Object, InspectorMode.DebugInternal);
 
             m_Scene                                 = m_Object.FindProperty("m_Scene");
             m_Lightmaps                             = m_Object.FindProperty("m_Lightmaps");

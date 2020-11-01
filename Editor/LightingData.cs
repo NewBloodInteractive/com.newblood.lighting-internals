@@ -8,6 +8,8 @@ namespace NewBlood
 {
     public class LightingData
     {
+        public LightingDataAsset asset { get; }
+
         public SceneAsset scene
         {
             get => m_Scene.objectReferenceValue as SceneAsset;
@@ -121,7 +123,8 @@ namespace NewBlood
             if (asset == null)
                 throw new ArgumentNullException(nameof(asset));
 
-            m_Object = new SerializedObject(asset);
+            this.asset = asset;
+            m_Object   = new SerializedObject(asset);
 
             // Changing inspectorMode to DebugInternal allows us to see inaccessible values in LightingDataAsset.
             SerializedObjectUtility.SetInspectorMode(m_Object, InspectorMode.DebugInternal);
@@ -144,6 +147,12 @@ namespace NewBlood
             m_BakedReflectionProbes                 = m_Object.FindProperty("m_BakedReflectionProbes");
             m_EnlightenData                         = m_Object.FindProperty("m_EnlightenData");
             m_EnlightenDataVersion                  = m_Object.FindProperty("m_EnlightenDataVersion");
+        }
+
+        public static LightingData CreateInstance()
+        {
+            // LightingDataAsset's constructor is private, so we need to reflect into ObjectFactory.CreateDefaultInstance.
+            return new LightingData(InternalObjectFactory.CreateDefaultInstance<LightingDataAsset>());
         }
 
         readonly SerializedObject m_Object;

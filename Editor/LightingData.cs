@@ -52,10 +52,10 @@ namespace NewBlood
             set { SerializedPropertyUtility.WriteSphericalHarmonicsL2(m_BakedAmbientProbeInLinear, value); m_Object.ApplyModifiedProperties(); }
         }
 
-        public RendererData lightmappedRendererData
+        public RendererData[] lightmappedRendererData
         {
-            get => RendererData.Read(m_LightmappedRendererData);
-            set { RendererData.Write(m_LightmappedRendererData, value); m_Object.ApplyModifiedProperties(); }
+            get => SerializedPropertyUtility.ReadArray(m_LightmappedRendererData, RendererData.Read);
+            set => SerializedPropertyUtility.WriteArrayAndApply(m_LightmappedRendererData, RendererData.Write, value);
         }
 
         public SceneObjectIdentifier[] lightmappedRendererDataIDs

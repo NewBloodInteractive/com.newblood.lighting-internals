@@ -27,11 +27,6 @@ namespace NewBlood
             };
         }
 
-        public static SceneObjectIdentifier GetSceneObjectIdentifierSlow(int instanceId)
-        {
-            return FromGlobalObjectId(GlobalObjectId.GetGlobalObjectIdSlow(instanceId));
-        }
-
         public static SceneObjectIdentifier GetSceneObjectIdentifierSlow(Object targetObject)
         {
             return FromGlobalObjectId(GlobalObjectId.GetGlobalObjectIdSlow(targetObject));
@@ -43,15 +38,6 @@ namespace NewBlood
             GlobalObjectId.GetGlobalObjectIdsSlow(objects, globalIds);
 
             for (int i = 0; i < objects.Length; i++)
-                outputIdentifiers[i] = FromGlobalObjectId(globalIds[i]);
-        }
-
-        public static void GetSceneObjectIdentifiersSlow(int[] instanceIds, SceneObjectIdentifier[] outputIdentifiers)
-        {
-            var globalIds = new GlobalObjectId[outputIdentifiers.Length];
-            GlobalObjectId.GetGlobalObjectIdsSlow(instanceIds, globalIds);
-
-            for (int i = 0; i < instanceIds.Length; i++)
                 outputIdentifiers[i] = FromGlobalObjectId(globalIds[i]);
         }
 
@@ -74,25 +60,6 @@ namespace NewBlood
             }
         }
 
-        public static void SceneObjectIdentifiersToInstanceIDsSlow(Scene scene, SceneObjectIdentifier[] identifiers, int[] outputInstanceIDs)
-        {
-            var objects = GetSceneObjects(scene);
-            var ids     = new SceneObjectIdentifier[objects.Length];
-            GetSceneObjectIdentifiersSlow(objects, ids);
-            
-            for (int i = 0; i < identifiers.Length; i++)
-            {
-                for (int j = 0; j < objects.Length; j++)
-                {
-                    if (identifiers[i].Equals(ids[j]))
-                    {
-                        outputInstanceIDs[i] = objects[j].GetInstanceID();
-                        break;
-                    }
-                }
-            }
-        }
-
         public static Object SceneObjectIdentifierToObjectSlow(Scene scene, SceneObjectIdentifier id)
         {
             var objects = GetSceneObjects(scene);
@@ -108,10 +75,45 @@ namespace NewBlood
             return null;
         }
 
+    #if UNITY_2020_1_OR_NEWER
+        public static SceneObjectIdentifier GetSceneObjectIdentifierSlow(int instanceId)
+        {
+            return FromGlobalObjectId(GlobalObjectId.GetGlobalObjectIdSlow(instanceId));
+        }
+
+        public static void GetSceneObjectIdentifiersSlow(int[] instanceIds, SceneObjectIdentifier[] outputIdentifiers)
+        {
+            var globalIds = new GlobalObjectId[outputIdentifiers.Length];
+            GlobalObjectId.GetGlobalObjectIdsSlow(instanceIds, globalIds);
+
+            for (int i = 0; i < instanceIds.Length; i++)
+                outputIdentifiers[i] = FromGlobalObjectId(globalIds[i]);
+        }
+
+        public static void SceneObjectIdentifiersToInstanceIDsSlow(Scene scene, SceneObjectIdentifier[] identifiers, int[] outputInstanceIDs)
+        {
+            var objects = GetSceneObjects(scene);
+            var ids     = new SceneObjectIdentifier[objects.Length];
+            GetSceneObjectIdentifiersSlow(objects, ids);
+
+            for (int i = 0; i < identifiers.Length; i++)
+            {
+                for (int j = 0; j < objects.Length; j++)
+                {
+                    if (identifiers[i].Equals(ids[j]))
+                    {
+                        outputInstanceIDs[i] = objects[j].GetInstanceID();
+                        break;
+                    }
+                }
+            }
+        }
+
         public static int SceneObjectIdentifierToInstanceIDSlow(Scene scene, SceneObjectIdentifier id)
         {
             return SceneObjectIdentifierToObjectSlow(scene, id).GetInstanceID();
         }
+    #endif
 
         static Object[] GetSceneObjects(Scene scene)
         {

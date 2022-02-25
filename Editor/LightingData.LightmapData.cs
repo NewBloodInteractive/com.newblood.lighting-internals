@@ -8,9 +8,32 @@ namespace NewBlood
         [Serializable]
         public struct LightmapData
         {
-            public Texture2D m_Lightmap;
-            public Texture2D m_DirLightmap;
-            public Texture2D m_ShadowMask;
+            [SerializeField]
+            Texture2D m_Lightmap;
+
+            [SerializeField]
+            Texture2D m_DirLightmap;
+
+            [SerializeField]
+            Texture2D m_ShadowMask;
+
+            public Texture2D lightmap
+            {
+                get => m_Lightmap;
+                set => m_Lightmap = value;
+            }
+
+            public Texture2D dirLightmap
+            {
+                get => m_DirLightmap;
+                set => m_DirLightmap = value;
+            }
+
+            public Texture2D shadowMask
+            {
+                get => m_ShadowMask;
+                set => m_ShadowMask = value;
+            }
         }
     }
 }

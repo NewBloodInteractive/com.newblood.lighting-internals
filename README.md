@@ -1,5 +1,5 @@
 # Lighting Internals Package
-Provides APIs to access internal APIs related to lighting.
+Provides access to internal lighting APIs.
 
 # `LightingData`
 Provides access to the information contained in the `LightingDataAsset` class. To use it, create a new instance and call `Initialize`:

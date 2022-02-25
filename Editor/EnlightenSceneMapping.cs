@@ -1,66 +1,54 @@
-﻿using UnityEditor;
+﻿using System;
 using UnityEngine;
 
 namespace NewBlood
 {
-    public class EnlightenSceneMapping
+    [Serializable]
+    public sealed class EnlightenSceneMapping
     {
+        [SerializeField]
+        EnlightenRendererInformation[] m_Renderers;
+
+        [SerializeField]
+        EnlightenSystemInformation[] m_Systems;
+
+        [SerializeField]
+        Hash128[] m_Probesets;
+
+        [SerializeField]
+        EnlightenSystemAtlasInformation[] m_SystemAtlases;
+
+        [SerializeField]
+        EnlightenTerrainChunksInformation[] m_TerrainChunks;
+
         public EnlightenRendererInformation[] renderers
         {
-            get => SerializedPropertyUtility.ReadArray(m_Renderers, EnlightenRendererInformation.Read);
-            set => SerializedPropertyUtility.WriteArrayAndApply(m_Renderers, EnlightenRendererInformation.Write, value);
+            get => m_Renderers;
+            set => m_Renderers = value;
         }
 
         public EnlightenSystemInformation[] systems
         {
-            get => SerializedPropertyUtility.ReadArray(m_Systems, EnlightenSystemInformation.Read);
-            set => SerializedPropertyUtility.WriteArrayAndApply(m_Systems, EnlightenSystemInformation.Write, value);
+            get => m_Systems;
+            set => m_Systems = value;
         }
 
         public Hash128[] probesets
         {
-            get => SerializedPropertyUtility.ReadArray(m_Probesets, SerializedPropertyUtility.ReadHash128);
-            set => SerializedPropertyUtility.WriteArrayAndApply(m_Probesets, SerializedPropertyUtility.WriteHash128, value);
+            get => m_Probesets;
+            set => m_Probesets = value;
         }
 
         public EnlightenSystemAtlasInformation[] systemAtlases
         {
-            get => SerializedPropertyUtility.ReadArray(m_SystemAtlases, EnlightenSystemAtlasInformation.Read);
-            set => SerializedPropertyUtility.WriteArrayAndApply(m_SystemAtlases, EnlightenSystemAtlasInformation.Write, value);
+            get => m_SystemAtlases;
+            set => m_SystemAtlases = value;
         }
 
         public EnlightenTerrainChunksInformation[] terrainChunks
         {
-            get => SerializedPropertyUtility.ReadArray(m_TerrainChunks, EnlightenTerrainChunksInformation.Read);
-            set => SerializedPropertyUtility.WriteArrayAndApply(m_TerrainChunks, EnlightenTerrainChunksInformation.Write, value);
+            get => m_TerrainChunks;
+            set => m_TerrainChunks = value;
         }
-
-        internal EnlightenSceneMapping(SerializedProperty property)
-        {
-            m_Renderers     = property.FindPropertyRelative("m_Renderers");
-            m_Systems       = property.FindPropertyRelative("m_Systems");
-            m_Probesets     = property.FindPropertyRelative("m_Probesets");
-            m_SystemAtlases = property.FindPropertyRelative("m_SystemAtlases");
-            m_TerrainChunks = property.FindPropertyRelative("m_TerrainChunks");
-        }
-
-        internal static void Write(SerializedProperty property, EnlightenSceneMapping mapping)
-        {
-            SerializedPropertyUtility.WriteArrayAndApply(property.FindPropertyRelative("m_Renderers"), EnlightenRendererInformation.Write, mapping.renderers);
-            SerializedPropertyUtility.WriteArrayAndApply(property.FindPropertyRelative("m_Systems"), EnlightenSystemInformation.Write, mapping.systems);
-            SerializedPropertyUtility.WriteArrayAndApply(property.FindPropertyRelative("m_Probesets"), SerializedPropertyUtility.WriteHash128, mapping.probesets);
-            SerializedPropertyUtility.WriteArrayAndApply(property.FindPropertyRelative("m_SystemAtlases"), EnlightenSystemAtlasInformation.Write, mapping.systemAtlases);
-            SerializedPropertyUtility.WriteArrayAndApply(property.FindPropertyRelative("m_TerrainChunks"), EnlightenTerrainChunksInformation.Write, mapping.terrainChunks);
-        }
-
-        readonly SerializedProperty m_Renderers;
-
-        readonly SerializedProperty m_Systems;
-
-        readonly SerializedProperty m_Probesets;
-
-        readonly SerializedProperty m_SystemAtlases;
-
-        readonly SerializedProperty m_TerrainChunks;
     }
 }

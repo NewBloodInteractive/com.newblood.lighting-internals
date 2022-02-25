@@ -1,201 +1,189 @@
 using System;
-using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
 
 namespace NewBlood
 {
-    public class LightingData
+    [Serializable]
+    public sealed partial class LightingData : ScriptableObject
     {
-        public LightingDataAsset asset { get; }
+        [SerializeField]
+        SceneAsset m_Scene;
+
+        [SerializeField]
+        LightmapData[] m_Lightmaps;
+
+        [SerializeField]
+        Texture2D[] m_AOTextures;
+
+        [SerializeField]
+        string[] m_LightmapsCacheFiles;
+
+        [SerializeField]
+        LightProbes m_LightProbes;
+
+        [SerializeField]
+        int m_LightmapsMode;
+
+        [SerializeField]
+        SphericalHarmonicsL2 m_BakedAmbientProbeInLinear;
+
+        [SerializeField]
+        RendererData[] m_LightmappedRendererData;
+
+        [SerializeField]
+        SceneObjectIdentifier[] m_LightmappedRendererDataIDs;
+
+        [SerializeField]
+        EnlightenSceneMapping m_EnlightenSceneMapping;
+
+        [SerializeField]
+        SceneObjectIdentifier[] m_EnlightenSceneMappingRendererIDs;
+
+        [SerializeField]
+        SceneObjectIdentifier[] m_Lights;
+
+        [SerializeField]
+        LightBakingOutput[] m_LightBakingOutputs;
+
+        [SerializeField]
+        string[] m_BakedReflectionProbeCubemapCacheFiles;
+
+        [SerializeField]
+        Texture[] m_BakedReflectionProbeCubemaps;
+
+        [SerializeField]
+        SceneObjectIdentifier[] m_BakedReflectionProbes;
+
+        [SerializeField]
+        byte[] m_EnlightenData;
+
+        [SerializeField]
+        int m_EnlightenDataVersion;
 
         public SceneAsset scene
         {
-            get => m_Scene.objectReferenceValue as SceneAsset;
-            set { m_Scene.objectReferenceValue = value; m_Object.ApplyModifiedProperties(); }
+            get => m_Scene;
+            set => m_Scene = value;
         }
 
         public LightmapData[] lightmaps
         {
-            get => SerializedPropertyUtility.ReadArray(m_Lightmaps, SerializedPropertyUtility.ReadLightmapData);
-            set => SerializedPropertyUtility.WriteArrayAndApply(m_Lightmaps, SerializedPropertyUtility.WriteLightmapData, value);
+            get => m_Lightmaps;
+            set => m_Lightmaps = value;
         }
 
         public Texture2D[] aoTextures
         {
-            get => SerializedPropertyUtility.ReadArray(m_AOTextures, property => property.objectReferenceValue as Texture2D);
-            set => SerializedPropertyUtility.WriteArrayAndApply(m_AOTextures, (property, value) => property.objectReferenceValue = value, value);
+            get => m_AOTextures;
+            set => m_AOTextures = value;
         }
 
         public string[] lightmapsCacheFiles
         {
-            get => SerializedPropertyUtility.ReadArray(m_LightmapsCacheFiles, property => property.stringValue);
-            set => SerializedPropertyUtility.WriteArrayAndApply(m_LightmapsCacheFiles, (property, value) => property.stringValue = value, value);
+            get => m_LightmapsCacheFiles;
+            set => m_LightmapsCacheFiles = value;
         }
 
         public LightProbes lightProbes
         {
-            get => m_LightProbes.objectReferenceValue as LightProbes;
-            set { m_LightProbes.objectReferenceValue = value; m_Object.ApplyModifiedProperties(); }
+            get => m_LightProbes;
+            set => m_LightProbes = value;
         }
 
-        public LightmapsMode lightmapsMode
+        public int lightmapsMode
         {
-            get => (LightmapsMode)m_LightmapsMode.intValue;
-            set { m_LightmapsMode.intValue = (int)value; m_Object.ApplyModifiedProperties(); }
+            get => m_LightmapsMode;
+            set => m_LightmapsMode = value;
         }
 
         public SphericalHarmonicsL2 bakedAmbientProbeInLinear
         {
-            get => SerializedPropertyUtility.ReadSphericalHarmonicsL2(m_BakedAmbientProbeInLinear);
-            set { SerializedPropertyUtility.WriteSphericalHarmonicsL2(m_BakedAmbientProbeInLinear, value); m_Object.ApplyModifiedProperties(); }
+            get => m_BakedAmbientProbeInLinear;
+            set => m_BakedAmbientProbeInLinear = value;
         }
 
         public RendererData[] lightmappedRendererData
         {
-            get => SerializedPropertyUtility.ReadArray(m_LightmappedRendererData, RendererData.Read);
-            set => SerializedPropertyUtility.WriteArrayAndApply(m_LightmappedRendererData, RendererData.Write, value);
+            get => m_LightmappedRendererData;
+            set => m_LightmappedRendererData = value;
         }
 
         public SceneObjectIdentifier[] lightmappedRendererDataIDs
         {
-            get => SerializedPropertyUtility.ReadArray(m_LightmappedRendererDataIDs, SceneObjectIdentifier.Read);
-            set => SerializedPropertyUtility.WriteArrayAndApply(m_LightmappedRendererDataIDs, SceneObjectIdentifier.Write, value);
+            get => m_LightmappedRendererDataIDs;
+            set => m_LightmappedRendererDataIDs = value;
         }
 
         public EnlightenSceneMapping enlightenSceneMapping
         {
-            get => new EnlightenSceneMapping(m_EnlightenSceneMapping);
-            set { EnlightenSceneMapping.Write(m_EnlightenSceneMapping, value); m_Object.ApplyModifiedProperties(); }
+            get => m_EnlightenSceneMapping;
+            set => m_EnlightenSceneMapping = value;
         }
 
         public SceneObjectIdentifier[] enlightenSceneMappingRendererIDs
         {
-            get => SerializedPropertyUtility.ReadArray(m_EnlightenSceneMappingRendererIDs, SceneObjectIdentifier.Read);
-            set => SerializedPropertyUtility.WriteArrayAndApply(m_EnlightenSceneMappingRendererIDs, SceneObjectIdentifier.Write, value);
+            get => m_EnlightenSceneMappingRendererIDs;
+            set => m_EnlightenSceneMappingRendererIDs = value;
         }
 
         public SceneObjectIdentifier[] lights
         {
-            get => SerializedPropertyUtility.ReadArray(m_Lights, SceneObjectIdentifier.Read);
-            set => SerializedPropertyUtility.WriteArrayAndApply(m_Lights, SceneObjectIdentifier.Write, value);
+            get => m_Lights;
+            set => m_Lights = value;
         }
 
         public LightBakingOutput[] lightBakingOutputs
         {
-            get => SerializedPropertyUtility.ReadArray(m_LightBakingOutputs, SerializedPropertyUtility.ReadLightBakingOutput);
-            set => SerializedPropertyUtility.WriteArrayAndApply(m_LightBakingOutputs, SerializedPropertyUtility.WriteLightBakingOutput, value);
+            get => m_LightBakingOutputs;
+            set => m_LightBakingOutputs = value;
         }
 
         public string[] bakedReflectionProbeCubemapCacheFiles
         {
-            get => SerializedPropertyUtility.ReadArray(m_BakedReflectionProbeCubemapCacheFiles, property => property.stringValue);
-            set => SerializedPropertyUtility.WriteArrayAndApply(m_BakedReflectionProbeCubemapCacheFiles, (property, value) => property.stringValue = value, value);
+            get => m_BakedReflectionProbeCubemapCacheFiles;
+            set => m_BakedReflectionProbeCubemapCacheFiles = value;
         }
 
         public Texture[] bakedReflectionProbeCubemaps
         {
-            get => SerializedPropertyUtility.ReadArray(m_BakedReflectionProbeCubemaps, property => property.objectReferenceValue as Texture);
-            set => SerializedPropertyUtility.WriteArrayAndApply(m_BakedReflectionProbeCubemaps, (property, value) => property.objectReferenceValue = value, value);
+            get => m_BakedReflectionProbeCubemaps;
+            set => m_BakedReflectionProbeCubemaps = value;
         }
 
         public SceneObjectIdentifier[] bakedReflectionProbes
         {
-            get => SerializedPropertyUtility.ReadArray(m_BakedReflectionProbes, SceneObjectIdentifier.Read);
-            set => SerializedPropertyUtility.WriteArrayAndApply(m_BakedReflectionProbes, SceneObjectIdentifier.Write, value);
+            get => m_BakedReflectionProbes;
+            set => m_BakedReflectionProbes = value;
         }
 
         public byte[] enlightenData
         {
-            get => SerializedPropertyUtility.ReadArray(m_EnlightenData, property => (byte)property.intValue);
-            set => SerializedPropertyUtility.WriteArrayAndApply(m_EnlightenData, (property, value) => property.intValue = value, value);
+            get => m_EnlightenData;
+            set => m_EnlightenData = value;
         }
 
         public int enlightenDataVersion
         {
-            get => m_EnlightenDataVersion.intValue;
-            set { m_EnlightenDataVersion.intValue = value; m_Object.ApplyModifiedProperties(); }
+            get => m_EnlightenDataVersion;
+            set => m_EnlightenDataVersion = value;
         }
 
-        LightingData(LightingDataAsset asset)
+        public void Initialize(LightingDataAsset asset)
         {
-            if (asset == null)
-                throw new ArgumentNullException(nameof(asset));
-
-            this.asset = asset;
-            m_Object   = new SerializedObject(asset);
-
-            // Changing inspectorMode to DebugInternal allows us to see inaccessible values in LightingDataAsset.
-            SerializedObjectUtility.SetInspectorMode(m_Object, InspectorMode.DebugInternal);
-
-            m_Scene                                 = m_Object.FindProperty("m_Scene");
-            m_Lightmaps                             = m_Object.FindProperty("m_Lightmaps");
-            m_AOTextures                            = m_Object.FindProperty("m_AOTextures");
-            m_LightmapsCacheFiles                   = m_Object.FindProperty("m_LightmapsCacheFiles");
-            m_LightProbes                           = m_Object.FindProperty("m_LightProbes");
-            m_LightmapsMode                         = m_Object.FindProperty("m_LightmapsMode");
-            m_BakedAmbientProbeInLinear             = m_Object.FindProperty("m_BakedAmbientProbeInLinear");
-            m_LightmappedRendererData               = m_Object.FindProperty("m_LightmappedRendererData");
-            m_LightmappedRendererDataIDs            = m_Object.FindProperty("m_LightmappedRendererDataIDs");
-            m_EnlightenSceneMapping                 = m_Object.FindProperty("m_EnlightenSceneMapping");
-            m_EnlightenSceneMappingRendererIDs      = m_Object.FindProperty("m_EnlightenSceneMappingRendererIDs");
-            m_Lights                                = m_Object.FindProperty("m_Lights");
-            m_LightBakingOutputs                    = m_Object.FindProperty("m_LightBakingOutputs");
-            m_BakedReflectionProbeCubemapCacheFiles = m_Object.FindProperty("m_BakedReflectionProbeCubemapCacheFiles");
-            m_BakedReflectionProbeCubemaps          = m_Object.FindProperty("m_BakedReflectionProbeCubemaps");
-            m_BakedReflectionProbes                 = m_Object.FindProperty("m_BakedReflectionProbes");
-            m_EnlightenData                         = m_Object.FindProperty("m_EnlightenData");
-            m_EnlightenDataVersion                  = m_Object.FindProperty("m_EnlightenDataVersion");
+            var source = new SerializedObject(asset);
+            var dest   = new SerializedObject(this);
+            SerializedObjectUtility.SetInspectorMode(source, InspectorMode.DebugInternal);
+            SerializedObjectUtility.CopySerialized(source, dest);
         }
 
-        public static LightingData CreateFromAsset(LightingDataAsset asset)
+        public void Save(LightingDataAsset asset)
         {
-            return new LightingData(asset);
+            var source = new SerializedObject(this);
+            var dest   = new SerializedObject(asset);
+            SerializedObjectUtility.SetInspectorMode(dest, InspectorMode.DebugInternal);
+            SerializedObjectUtility.CopySerialized(source, dest);
         }
-
-        public static LightingData CreateInstance()
-        {
-            // LightingDataAsset's constructor is private, so we need to reflect into ObjectFactory.CreateDefaultInstance.
-            return new LightingData(InternalObjectFactory.CreateDefaultInstance<LightingDataAsset>());
-        }
-
-        readonly SerializedObject m_Object;
-
-        readonly SerializedProperty m_Scene;
-
-        readonly SerializedProperty m_Lightmaps;
-
-        readonly SerializedProperty m_AOTextures;
-
-        readonly SerializedProperty m_LightmapsCacheFiles;
-
-        readonly SerializedProperty m_LightProbes;
-
-        readonly SerializedProperty m_LightmapsMode;
-
-        readonly SerializedProperty m_BakedAmbientProbeInLinear;
-
-        readonly SerializedProperty m_LightmappedRendererData;
-
-        readonly SerializedProperty m_LightmappedRendererDataIDs;
-
-        readonly SerializedProperty m_EnlightenSceneMapping;
-
-        readonly SerializedProperty m_EnlightenSceneMappingRendererIDs;
-
-        readonly SerializedProperty m_Lights;
-
-        readonly SerializedProperty m_LightBakingOutputs;
-
-        readonly SerializedProperty m_BakedReflectionProbeCubemapCacheFiles;
-
-        readonly SerializedProperty m_BakedReflectionProbeCubemaps;
-
-        readonly SerializedProperty m_BakedReflectionProbes;
-
-        readonly SerializedProperty m_EnlightenData;
-
-        readonly SerializedProperty m_EnlightenDataVersion;
     }
 }

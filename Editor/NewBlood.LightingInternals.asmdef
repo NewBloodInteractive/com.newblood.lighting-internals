@@ -1,5 +1,5 @@
 {
-    "name": "NewBlood.LightingData",
+    "name": "NewBlood.LightingInternals",
     "rootNamespace": "",
     "references": [],
     "includePlatforms": [

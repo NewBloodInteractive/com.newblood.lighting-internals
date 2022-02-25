@@ -1,5 +1,5 @@
 {
-  "name": "com.newblood.lightdata",
+  "name": "com.newblood.lighting-internals",
   "displayName": "Lighting Internals",
   "description": "Provides access to internal lighting APIs.",
   "version": "1.0.0",

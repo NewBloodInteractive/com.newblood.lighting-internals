@@ -13,7 +13,7 @@ data.Save(Lightmapping.lightingDataAsset);
 ```
 
 # `LightmappingInternal`
-Provides access to the `bakeAnalytics` callback, which provides detailed information about a lightmap bake. It provides information in the form of a JSON string, which can be deserialized through the `LightmappingAnalyticsData` type.
+Provides access to the `bakeAnalytics` callback, which receives detailed information about lightmap bakes. This comes in the form of a JSON string, which can be deserialized through the `LightmappingAnalyticsData` type.
 
 ```cs
 LightmappingInternal.bakeAnalytics += OnBakeAnalytics;

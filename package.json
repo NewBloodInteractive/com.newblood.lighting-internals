@@ -1,7 +1,7 @@
 {
   "name": "com.newblood.lightdata",
-  "displayName": "Lighting Data",
-  "description": "Enables access to internal LightingDataAsset information.",
+  "displayName": "Lighting Internals",
+  "description": "Provides access to internal lighting APIs.",
   "version": "1.0.0",
   "type": "library"
 }

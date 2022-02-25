@@ -5,7 +5,6 @@ using UnityEngine.Rendering;
 
 namespace NewBlood
 {
-    [Serializable]
     public sealed partial class LightingData : ScriptableObject
     {
         [SerializeField]

@@ -11,3 +11,27 @@ In order to save your changes back to the `LightingDataAsset`, use the `Save` me
 ```cs
 data.Save(Lightmapping.lightingDataAsset);
 ```
+
+# `LightmappingInternal`
+Provides access to the `bakeAnalytics` callback, which provides detailed information about a lightmap bake. It provides information in the form of a JSON string, which can be deserialized through the `LightmappingAnalyticsData` type.
+
+```cs
+LightmappingInternal.bakeAnalytics += OnBakeAnalytics;
+
+// ...
+
+static void OnBakeAnalytics(string json)
+{
+    switch (JsonUtility.FromJson<LightmappingAnalyticsData>(json).outcome)
+    {
+    case "success":
+        // Bake completed successfully
+        break;
+    case "cancelled":
+    case "forcestop":
+    case "interrupted":
+        // Bake completed unsuccessfully
+        break;
+    }
+}
+```

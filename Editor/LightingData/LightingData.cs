@@ -183,5 +183,17 @@ namespace NewBlood
             SerializedObjectUtility.SetInspectorMode(dest, InspectorMode.DebugInternal);
             SerializedObjectUtility.CopySerialized(source, dest);
         }
+
+        public static LightingDataAsset CreateAsset()
+        {
+            // Unfortunately, ObjectFactory.CreateDefaultInstance is not public, so we need to reflect into it.
+            var asset = ObjectFactoryInternal.CreateDefaultInstance<LightingDataAsset>();
+
+            // We have to use FromJsonOverwrite instead of SerializedObject, because the latter will call the
+            // native LightingDataAsset::CheckConsistency method, which will check the enlighten data version
+            // and produce a warning if it does not match the expected value.
+            EditorJsonUtility.FromJsonOverwrite("{ \"LightingDataAsset\": { \"m_EnlightenDataVersion\": 112 } }", asset);
+            return asset;
+        }
     }
 }

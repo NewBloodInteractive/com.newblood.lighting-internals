@@ -86,9 +86,11 @@ namespace NewBlood
             case SerializedPropertyType.Bounds:
                 dest.boundsValue = source.boundsValue;
                 break;
+        #if UNITY_2022_1_OR_NEWER
             case SerializedPropertyType.Gradient:
                 dest.gradientValue = source.gradientValue;
                 break;
+        #endif
             case SerializedPropertyType.Quaternion:
                 dest.quaternionValue = source.quaternionValue;
                 break;

@@ -174,6 +174,7 @@ namespace NewBlood
             var dest   = new SerializedObject(this);
             SerializedObjectUtility.SetInspectorMode(source, InspectorMode.DebugInternal);
             SerializedObjectUtility.CopySerialized(source, dest);
+            EditorUtility.SetDirty(this);
         }
 
         public void Save(LightingDataAsset asset)
@@ -182,6 +183,7 @@ namespace NewBlood
             var dest   = new SerializedObject(asset);
             SerializedObjectUtility.SetInspectorMode(dest, InspectorMode.DebugInternal);
             SerializedObjectUtility.CopySerialized(source, dest);
+            EditorUtility.SetDirty(asset);
         }
 
         public static LightingDataAsset CreateAsset()

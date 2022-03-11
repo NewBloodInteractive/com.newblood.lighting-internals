@@ -186,6 +186,85 @@ namespace NewBlood
             EditorUtility.SetDirty(asset);
         }
 
+        public void UpdateScene()
+        {
+            var lights    = new Light[m_Lights.Length];
+            var renderers = new Object[m_LightmappedRendererDataIDs.Length];
+            SceneObjectIdentifier.SceneObjectIdentifiersToObjectsSlow(m_Scene, m_Lights, lights);
+            SceneObjectIdentifier.SceneObjectIdentifiersToObjectsSlow(m_Scene, m_LightmappedRendererDataIDs, renderers);
+
+            for (int i = 0; i < lights.Length; i++)
+            {
+                var lightBakingOutput  = m_LightBakingOutputs[i];
+                lights[i].bakingOutput = new UnityEngine.LightBakingOutput
+                {
+                    probeOcclusionLightIndex = lightBakingOutput.probeOcclusionLightIndex,
+                    occlusionMaskChannel     = lightBakingOutput.occlusionMaskChannel,
+                    lightmapBakeType         = lightBakingOutput.lightmapBakeMode.lightmapBakeType,
+                    mixedLightingMode        = lightBakingOutput.lightmapBakeMode.mixedLightingMode,
+                    isBaked                  = lightBakingOutput.isBaked,
+                };
+            }
+
+            for (int i = 0; i < renderers.Length; i++)
+            {
+                var rendererData = m_LightmappedRendererData[i];
+
+                if (renderers[i] is MeshRenderer)
+                {
+                    var renderer                         = (MeshRenderer)renderers[i];
+                    renderer.lightmapIndex               = rendererData.lightmapIndex;
+                    renderer.realtimeLightmapIndex       = rendererData.lightmapIndexDynamic;
+                    renderer.lightmapScaleOffset         = rendererData.lightmapST;
+                    renderer.realtimeLightmapScaleOffset = rendererData.lightmapSTDynamic;
+                    renderer.enlightenVertexStream       = rendererData.uvMesh;
+                }
+                else if (renderers[i] is Terrain)
+                {
+                    var terrain                         = (Terrain)renderers[i];
+                    terrain.lightmapIndex               = rendererData.lightmapIndex;
+                    terrain.realtimeLightmapIndex       = rendererData.lightmapIndexDynamic;
+                    terrain.lightmapScaleOffset         = rendererData.lightmapST;
+                    terrain.realtimeLightmapScaleOffset = rendererData.lightmapSTDynamic;
+
+                    // These values aren't exposed publicly on the Terrain class.
+                    var serializedObject = new SerializedObject(terrain);
+
+                    // Ensure the SerializedObject is in DebugInternal mode.
+                    SerializedObjectUtility.SetInspectorMode(serializedObject, InspectorMode.DebugInternal);
+
+                    // TODO: It might be better to use EditorJsonUtility to assign "hidden" values for backcompat.
+                    var dynamicUVST          = serializedObject.FindProperty("m_DynamicUVST");
+                    var chunkDynamicUVST     = serializedObject.FindProperty("m_ChunkDynamicUVST");
+                    var explicitProbeSetHash = serializedObject.FindProperty("m_ExplicitProbeSetHash");
+
+                    // Now we can actually assign the values.
+                    dynamicUVST.vector4Value          = rendererData.terrainDynamicUVST;
+                    chunkDynamicUVST.vector4Value     = rendererData.terrainChunkDynamicUVST;
+                    explicitProbeSetHash.hash128Value = rendererData.explicitProbeSetHash;
+                    serializedObject.ApplyModifiedPropertiesWithoutUndo();
+                }
+            }
+
+            // Build the lightmap texture array
+            var lightmaps = new UnityEngine.LightmapData[m_Lightmaps.Length];
+            
+            for (int i = 0; i < lightmaps.Length; i++)
+            {
+                lightmaps[i] = new UnityEngine.LightmapData
+                {
+                    lightmapColor = m_Lightmaps[i].lightmap,
+                    lightmapDir   = m_Lightmaps[i].dirLightmap,
+                    shadowMask    = m_Lightmaps[i].shadowMask
+                };
+            }
+
+            // Assign the lightmap settings values.
+            LightmapSettings.lightmapsMode = (LightmapsMode)m_LightmapsMode;
+            LightmapSettings.lightProbes   = m_LightProbes;
+            LightmapSettings.lightmaps     = lightmaps;
+        }
+
         public static LightingDataAsset CreateAsset()
         {
             // Unfortunately, ObjectFactory.CreateDefaultInstance is not public, so we need to reflect into it.

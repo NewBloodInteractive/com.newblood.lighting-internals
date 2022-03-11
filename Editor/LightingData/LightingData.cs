@@ -193,7 +193,7 @@ namespace NewBlood
             SceneObjectIdentifier.SceneObjectIdentifiersToObjectsSlow(m_Scene, m_Lights, lights);
             SceneObjectIdentifier.SceneObjectIdentifiersToObjectsSlow(m_Scene, m_LightmappedRendererDataIDs, renderers);
 
-            for (int i = 0; i < lights.Length; i++)
+            for (int i = 0; i < m_LightBakingOutputs.Length; i++)
             {
                 var lightBakingOutput  = m_LightBakingOutputs[i];
                 lights[i].bakingOutput = new UnityEngine.LightBakingOutput

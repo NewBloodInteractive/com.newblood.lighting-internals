@@ -3,5 +3,9 @@
   "displayName": "Lighting Internals",
   "description": "Provides access to internal lighting APIs.",
   "version": "1.0.0",
-  "type": "library"
+  "type": "library",
+  "dependencies":
+  {
+    "com.unity.nuget.mono-cecil": "1.10.2"
+  }
 }

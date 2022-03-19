@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace NewBlood
 {
-    public partial class LightingData
+    public partial class ScriptableLightingData
     {
         [Serializable]
         public struct LightmapData

@@ -1,15 +1,26 @@
 # Lighting Internals Package
 Provides access to internal lighting APIs.
 
-# `LightingData`
-Provides access to the information contained in the `LightingDataAsset` class. To use it, create a new instance and call `Initialize`:
+# `ScriptableLightingData`
+Provides access to the information contained in the `LightingDataAsset` class. To use it, create a new instance and call `Read`:
 ```cs
-var data = ScriptableObject.CreateInstance<LightingData>();
-data.Initialize(Lightmapping.lightingDataAsset);
+var data = ScriptableObject.CreateInstance<ScriptableLightingData>();
+data.Read(Lightmapping.lightingDataAsset);
 ```
-In order to save your changes back to the `LightingDataAsset`, use the `Save` method:
+In order to save your changes back to the `LightingDataAsset`, use the `Write` method:
 ```cs
-data.Save(Lightmapping.lightingDataAsset);
+data.Write(Lightmapping.lightingDataAsset);
+```
+
+# `ScriptableLightProbes`
+Provides access to the information contained in the `LightProbes` class. To use it, create a new instance and call `Read`:
+```cs
+var probes = ScriptableObject.CreateInstance<ScriptableLightProbes>();
+probes.Read(LightmapSettings.lightProbes);
+```
+In order to save your changes back to the `LightProbes`, use the `Write` method:
+```cs
+probes.Write(LightmapSettings.lightProbes);
 ```
 
 # `LightmappingInternal`

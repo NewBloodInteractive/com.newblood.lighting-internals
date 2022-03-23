@@ -178,8 +178,8 @@ namespace NewBlood
                     {
                         probeOcclusionLightIndex = lightBakingOutput.probeOcclusionLightIndex,
                         occlusionMaskChannel     = lightBakingOutput.occlusionMaskChannel,
-                        lightmapBakeType         = lightBakingOutput.lightmapBakeMode.lightmapBakeType,
-                        mixedLightingMode        = lightBakingOutput.lightmapBakeMode.mixedLightingMode,
+                        lightmapBakeType         = (LightmapBakeType)lightBakingOutput.lightmapBakeMode.lightmapBakeType,
+                        mixedLightingMode        = (MixedLightingMode)lightBakingOutput.lightmapBakeMode.mixedLightingMode,
                         isBaked                  = lightBakingOutput.isBaked,
                     };
                 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEngine;
 
 namespace NewBlood
 {
@@ -16,8 +17,8 @@ namespace NewBlood
             [Serializable]
             public struct LightmapBakeMode
             {
-                public int lightmapBakeType;
-                public int mixedLightingMode;
+                public LightmapBakeType lightmapBakeType;
+                public MixedLightingMode mixedLightingMode;
             }
         }
     }

@@ -11,6 +11,12 @@ namespace NewBlood
         [SerializeField]
         LightingDataAssetRoot m_Root = new();
 
+        public int serializedVersion
+        {
+            get => m_Root.LightingDataAsset.serializedVersion;
+            set => m_Root.LightingDataAsset.serializedVersion = value;
+        }
+
         public SceneAsset scene
         {
             get => m_Root.LightingDataAsset.m_Scene;
@@ -246,6 +252,7 @@ namespace NewBlood
             [Serializable]
             public struct SerializedData
             {
+                public int serializedVersion;
                 public SceneAsset m_Scene;
                 public LightmapData[] m_Lightmaps;
                 public Texture2D[] m_AOTextures;

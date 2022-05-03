@@ -8,17 +8,17 @@ namespace NewBlood
     [Serializable]
     public struct SceneObjectIdentifier : IEquatable<SceneObjectIdentifier>
     {
-        public ulong targetObject;
+        public long targetObject;
 
-        public ulong targetPrefab;
+        public long targetPrefab;
 
         public SceneObjectIdentifier(GlobalObjectId id)
         {
             if (id.identifierType != 2)
                 throw new ArgumentException("GlobalObjectId must refer to a scene object.", nameof(id));
 
-            targetObject = id.targetObjectId;
-            targetPrefab = id.targetPrefabId;
+            targetObject = unchecked((long)id.targetObjectId);
+            targetPrefab = unchecked((long)id.targetPrefabId);
         }
 
         public bool Equals(SceneObjectIdentifier other)
@@ -39,7 +39,7 @@ namespace NewBlood
         public GlobalObjectId ToGlobalObjectId(GUID sceneGuid)
         {
             GlobalObjectId id;
-            GlobalObjectId.TryParse($"GlobalObjectId_V1-2-{sceneGuid}-{targetObject}-{targetPrefab}", out id);
+            GlobalObjectId.TryParse($"GlobalObjectId_V1-2-{sceneGuid}-{unchecked((ulong)targetObject)}-{unchecked((ulong)targetPrefab)}", out id);
             return id;
         }
 

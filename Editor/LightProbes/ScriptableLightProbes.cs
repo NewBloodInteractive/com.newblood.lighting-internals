@@ -8,7 +8,7 @@ namespace NewBlood
     public sealed class ScriptableLightProbes : ScriptableObject
     {
         [SerializeField]
-        LightProbesRoot m_Root = new();
+        LightProbesRoot m_Root = new LightProbesRoot();
 
         public LightProbeData data
         {

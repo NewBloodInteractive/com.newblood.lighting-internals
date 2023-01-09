@@ -9,7 +9,7 @@ namespace NewBlood
     public sealed partial class ScriptableLightingData : ScriptableObject
     {
         [SerializeField]
-        LightingDataAssetRoot m_Root = new();
+        LightingDataAssetRoot m_Root = new LightingDataAssetRoot();
 
         public int serializedVersion
         {
